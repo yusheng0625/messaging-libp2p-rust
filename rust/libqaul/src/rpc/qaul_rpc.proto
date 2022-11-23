@@ -1,0 +1,63 @@
+syntax = "proto3";
+package qaul.rpc;
+
+// The main libqaul RPC message container.
+// All RPC messages from and to libqaul are packed
+// into this container.
+message QaulRpc {
+    // which module to approach
+    Modules module = 1;
+    // can be used to identify responses
+    string request_id = 2;
+    // authorisation
+    // binary user id
+    bytes user_id = 3;
+    // the protobuf encoded binary message data
+    // which is passed to the module.
+    bytes data = 4;
+}
+
+// Identification to which module the message shall be
+// handed to.
+enum Modules {
+    // default value, when nothing is defined.
+    // drop this message
+    NONE = 0;
+    // RPC related messages
+    // such as authorisation etc.
+    RPC = 1;
+    // node information
+    NODE = 2;
+    // user accounts on this node
+    USERACCOUNTS = 3;
+    // all users in the network
+    USERS = 4;
+    // routing information
+    ROUTER = 5;
+    // feed module handling
+    //
+    // send and retrieve feed messages
+    FEED = 6;
+    // connection information to other nodes
+    CONNECTIONS = 7;
+    // debug information & settings
+    DEBUG = 8;
+    // chat group handling
+    //
+    // manage chat groups and group invites
+    GROUP = 9;
+    // chat module
+    // to send chat messages, get a
+    // conversation overiew and all
+    // messages within a conversation
+    CHAT = 10;
+    // all functions to send and manage
+    // files sent into a chat conversation
+    CHATFILE = 11;
+    // BLE module handling
+    BLE = 12;
+    // Real Time Communication handling
+    RTC = 13;
+    // Delay Tolerant Networking
+    DTN = 14;
+}

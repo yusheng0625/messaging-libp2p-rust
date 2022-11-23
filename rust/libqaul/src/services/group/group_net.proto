@@ -1,0 +1,82 @@
+syntax = "proto3";
+package qaul.net.group;
+
+// Group network message container
+message GroupContainer {
+    oneof message {
+        // group invite
+        InviteMember invite_member = 1;
+        // reply invite
+        ReplyInvite reply_invite = 2;
+        // group status update
+        GroupInfo group_info = 3;
+        // member removed
+        RemovedMember removed = 4;
+    }
+}
+
+// Invite member
+message InviteMember {
+    // Group Info
+    GroupInfo group = 1;
+}
+
+// Group member state
+enum GroupMemberState {
+    // invited
+    Invited = 0;
+    // activated
+    Activated = 1;
+}
+
+// Group member role
+enum GroupMemberRole {
+    // user
+    User = 0;
+    // admin
+    Admin = 255;
+}
+
+// Group member
+message GroupMember {
+    // user id
+    bytes user_id = 1;
+    // role
+    GroupMemberRole role = 2;
+    // joined at
+    uint64 joined_at = 3;
+    // state
+    GroupMemberState state = 4;
+    // last message index
+    uint32 last_message_index = 5;
+}
+
+// Group Info
+message GroupInfo {
+    // group id
+    bytes group_id = 1;
+    // group name
+    string group_name = 2;
+    // created at
+    uint64 created_at = 3;
+    // group revision
+    uint32 revision = 4;
+    // updated members
+    repeated GroupMember members = 5;
+}
+
+// Reply to Invite
+//
+// Accept / Reject invitation
+message ReplyInvite {
+    // group id
+    bytes group_id = 1;
+    // accept true : accept, false: decline
+    bool accept = 2;
+}
+
+// Removed member
+message RemovedMember {
+    // group id
+    bytes group_id = 1;
+}

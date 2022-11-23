@@ -1,0 +1,58 @@
+executor: rust-linux
+steps:
+  - checkout-project
+  - attach_workspace:
+      at: ~/qaul-libp2p
+  - run:
+      name: Copy binaries to ./artifacts
+      shell: /bin/bash --login +eo pipefail
+      command: |
+        mkdir artifacts
+        # Linux - libqaul
+        cp rust/target/release/liblibqaul.so ./artifacts/
+        cp rust/target/release/cli-binaries/linux-cli-binaries.zip ./artifacts/
+        # Linux - qauld debian installers
+        cp rust/target/qauld-debian-packages/qauld-debian-packages.zip ./artifacts/
+        # Android
+        cp -a android/blemodule/build/outputs/aar/. ./artifacts/
+        cp -a android/libqaul/build/outputs/aar/. ./artifacts/
+        # iOS
+        cp rust/target/release/liblibqaul.dylib ./artifacts/
+        # MacOS
+        cp rust/target/universal/release/liblibqaul.a ./artifacts/
+        cp rust/target/release/cli-binaries/macos-cli-binaries.zip ./artifacts/
+        # Windows
+        cp rust/target/release/libqaul.dll ./artifacts/
+        cp rust/target/release/cli-binaries/windows-cli-binaries.zip ./artifacts/
+
+        # +eo pipefail + exit 0 >> step succeeds regardless of a command failing
+        exit 0
+  - run:
+      name: Install ghr
+      command: |
+        GHR_VERSION=0.14.0
+        GHR_URL=https://github.com/tcnksm/ghr/releases/download/v${GHR_VERSION}/ghr_v${GHR_VERSION}_linux_amd64.tar.gz
+        wget "$GHR_URL"
+        tar xzf ghr_v${GHR_VERSION}_linux_amd64.tar.gz
+        rm -r ghr_v${GHR_VERSION}_linux_amd64.tar.gz
+        echo "export PATH=ghr_v${GHR_VERSION}_linux_amd64:${PATH}" >> $BASH_ENV
+  - run:
+      name: Publish Release on GitHub
+      command: |
+        VERSION=$(cd rust/libqaul && cargo generate-lockfile -q && cargo pkgid | cut -d# -f2 | cut -d: -f2)
+        TAG="v${VERSION}-rust"
+
+        DESCRIPTION=$(cat docs/rust-release-template.md | sed "s/TAGNAME/${TAG}/g")
+
+        echo "Version Found: $VERSION"
+        echo "Tag built:     $TAG"
+        echo "Description:\n$DESCRIPTION"
+        echo ""
+
+        ghr -t "${GITHUB_TOKEN}" \
+          -u "${CIRCLE_PROJECT_USERNAME}" \
+          -r "${CIRCLE_PROJECT_REPONAME}" \
+          -c "${CIRCLE_SHA1}" \
+          -n "Libqaul and CLI - v${VERSION}" \
+          -b "${DESCRIPTION}" \
+          "${TAG}" artifacts/

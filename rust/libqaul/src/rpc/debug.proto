@@ -1,0 +1,83 @@
+syntax = "proto3";
+package qaul.rpc.debug;
+
+
+// Libqaul RPC Debug Messages
+message Debug {
+    // message type
+    oneof message {
+        // request a heartbeat
+        HeartbeatRequest heartbeat_request = 1;
+        // response to the heartbeat request
+        HeartbeatResponse heartbeat_response = 2;
+
+        // libqaul panics immediately
+        Panic panic = 3;
+
+        // enable/disable logging to file
+        LogToFile log_to_file = 4;
+
+        // Storage Path Request
+        StoragePathRequest storage_path_request = 5;
+        // Storage Path Response
+        StoragePathResponse storage_path_response = 6;
+
+        // Request for library to delete logs
+        DeleteLibqaulLogsRequest delete_libqaul_logs_request = 7;
+    }
+}
+
+// Request a Heartbeat from Libqaul
+//
+// The UI requests regular heartbeats from libqaul,
+// to check if libqaul is still alive
+message HeartbeatRequest {
+}
+
+// Heartbeat Reply
+//
+// Libqaul answers to the heartbeat request
+// with the heartbeat reply answer
+message HeartbeatResponse {
+}
+
+// Panic
+//
+// If libqaul receives this panic message, it
+// throws an error and panics immediatly.
+//
+// This message is for debugging only.
+message Panic {
+}
+
+
+// LogToFile
+//
+// If libqaul receives this enable message, it
+// start or stop to log error contents into error_xxx.log file.
+//
+message LogToFile {
+    bool enable =1 ;
+}
+
+
+// StoragePathRequest
+//
+// Return storage path
+//
+message StoragePathRequest {
+}
+
+// StoragePathResponse
+//
+// Contains Storage Path
+//
+message StoragePathResponse {
+    string storage_path = 1;
+}
+
+// DeleteLibqaulLogsRequest
+//
+// Requests for the log folder to be wiped clean
+message DeleteLibqaulLogsRequest {
+}

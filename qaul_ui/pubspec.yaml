@@ -1,0 +1,112 @@
+name: qaul_ui
+description: qaul - Internet Independent Wireless Mesh Communication App
+
+publish_to: 'none'
+
+version: 2.0.0-beta.5+810
+
+environment:
+  sdk: ">=2.15.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  adaptive_theme: ^3.0.0
+  archive: ^3.1.8
+  badges: ^2.0.1
+  better_open_file: ^3.6.3
+  bubble: ^1.2.1
+  collection: ^1.15.0
+  cupertino_icons: ^1.0.2
+  device_info_plus: ^4.1.2
+  equatable: ^2.0.3
+  ffi: ^2.0.1
+  file_picker: ^5.0.1
+  filesize: ^2.0.1
+  fixnum: ^1.0.1
+  flame: ^1.2.1
+  flame_forge2d: ^0.12.2
+  fluent_ui: ^3.12.0
+  flutter_chat_types: ^3.4.5
+  # TODO(brenodt): reinstate direct dependency once PR is merged (https://github.com/flyerhq/flutter_chat_ui/pull/305)
+  flutter_chat_ui:
+    git:
+      url: https://github.com/felixgabler/flutter_chat_ui.git
+      ref: fg/system_messages
+  flutter_email_sender: ^5.0.2
+  flutter_hooks: ^0.18.4
+  flutter_markdown: ^0.6.8
+  flutter_svg: ^1.1.4
+  font_awesome_flutter: ^10.1.0
+  hive: ^2.0.4
+  hive_flutter: ^1.1.0
+  hooks_riverpod: ^1.0.4
+  image: ^3.2.0
+  image_picker: ^0.8.5+3
+  intersperse: ^2.0.0
+  intl: ^0.17.0
+  local_notifications: { 'path': 'packages/local_notifications' }
+  logging: ^1.0.2
+  mailto: ^2.0.0
+  meta: ^1.7.0
+  mime: ^1.0.2
+  neat_periodic_task: ^2.0.0
+  open_simplex_2: ^0.2.1
+  package_info_plus: ^1.3.0
+  path: ^1.8.1
+  path_provider: ^2.0.8
+  qaul_rpc: { 'path': 'packages/qaul_rpc' }
+  responsive_framework: ^0.2.0
+  shared_preferences: ^2.0.12
+  uni_links: ^0.5.1
+  url_launcher: ^6.0.18
+  utils: { 'path': 'packages/utils' }
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  build_runner: ^2.1.4
+  fast_base58: ^0.2.1
+#  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons:
+    git:
+      ref: v0.11.0
+      url: https://github.com/fluttercommunity/flutter_launcher_icons.git
+  flutter_lints: ^2.0.1
+  hive_generator: ^1.1.1
+  uuid: ^3.0.6
+
+flutter_icons:
+  ios: true
+  remove_alpha_ios: true
+  image_path_ios: "assets/logo/icon_ios.png"
+
+  android: true
+  image_path_android: "assets/logo/icon_android.png"
+  adaptive_icon_foreground: "assets/logo/icon_android.png"
+  adaptive_icon_background: "#5EAED4"
+
+  windows:
+    generate: true
+    image_path: "assets/logo/icon_desktop.png"
+    icon_size: 256
+
+  macos:
+    generate: true
+    image_path: "assets/logo/icon_desktop.png"
+
+flutter:
+  uses-material-design: true
+
+  generate: true
+
+  assets:
+    - assets/icons/
+    - assets/license/
+    - assets/logo/

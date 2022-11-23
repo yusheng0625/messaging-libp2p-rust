@@ -1,0 +1,37 @@
+executor: rust-linux
+steps:
+  - checkout-project
+  - run:
+      name: Install protoc
+      command: |
+        sudo apt update
+        sudo apt install -y protobuf-compiler
+        sudo apt install -y gcc-arm-linux-gnueabihf
+        protoc --version
+  - setup-sccache
+  - restore-sccache-cache
+  - run:
+      name: Install cargo-deb package
+      command: cd rust && cargo install cargo-deb
+  - run:
+      name: Build qauld for Linux
+      command: cd rust/clients/qauld && cargo deb
+  - run:
+      name: Add ARM Target for Raspberry pi
+      command: cd rust && rustup target add armv7-unknown-linux-gnueabihf
+  - run:
+      name: Build qauld for Raspberry pi
+      command: cd rust/clients/qauld && cargo deb --target=armv7-unknown-linux-gnueabihf
+  - save-sccache-cache
+  - run:
+      name: zip debian files
+      command: |
+        cd rust/target/
+        mkdir qauld-debian-packages
+        mv debian/*.deb armv7-unknown-linux-gnueabihf/debian/*.deb qauld-debian-packages
+        cd qauld-debian-packages
+        zip qauld-debian-packages *
+  - persist_to_workspace:
+      root: ~/qaul-libp2p
+      paths:
+        - rust/target/qauld-debian-packages/qauld-debian-packages.zip

@@ -1,0 +1,258 @@
+syntax = "proto3";
+package qaul.rpc.group;
+
+// Group service RPC message container
+message Group {
+    // message type
+    oneof message {
+        // group create request
+        GroupCreateRequest group_create_request = 1;
+        // group create response
+        GroupCreateResponse group_create_response = 2;
+        // group rename request
+        GroupRenameRequest group_rename_request = 3;
+        // group rename response
+        GroupRenameResponse group_rename_response = 4;
+        // group invite member request
+        GroupInviteMemberRequest group_invite_member_request = 5;
+        // group invite member response
+        GroupInviteMemberResponse group_invite_member_response = 6;
+
+        // group remove member request
+        GroupRemoveMemberRequest group_remove_member_request = 7;
+        // group remove member response
+        GroupRemoveMemberResponse group_remove_member_response = 8;
+
+        // group info request
+        GroupInfoRequest group_info_request = 9;
+        // group info response
+        GroupInfo group_info_response = 10;
+
+        // group reply invite request
+        GroupReplyInviteRequest group_reply_invite_request = 11;
+        // group reply invite response
+        GroupReplyInviteResponse group_reply_invite_response = 12;
+
+        // group list request
+        GroupListRequest group_list_request = 13;
+        // group list response
+        GroupListResponse group_list_response = 14;
+
+        // group invited
+        GroupInvitedRequest group_invited_request = 15;
+        // group invited response
+        GroupInvitedResponse group_invited_response = 16;
+    }
+}
+
+// Group Result
+message GroupResult {
+    // status
+    //
+    // true = success
+    // false = an error happened
+    //
+    // if the result is false, the message will
+    // contain the error message.
+    bool status = 1;
+    // message
+    string message = 2;
+}
+
+// Create New Group
+message GroupCreateRequest {
+    // group name
+    string group_name = 1;
+}
+
+// Group creating response
+message GroupCreateResponse {
+    // group id
+    bytes group_id = 1;
+    // result
+    GroupResult result = 2;
+}
+
+// Group rename request
+message GroupRenameRequest {
+    // group id
+    bytes group_id = 1;
+    // group name
+    string group_name = 2;
+}
+
+// Group rename response
+message GroupRenameResponse {
+    // group id
+    bytes group_id = 1;
+    // group name
+    string group_name = 2;
+    // result
+    GroupResult result = 3;
+}
+
+// Invite member
+message GroupInviteMemberRequest {
+    // group id
+    bytes group_id = 1;
+    // user id
+    bytes user_id = 2;
+}
+
+// Invite member response
+message GroupInviteMemberResponse {
+    // group id
+    bytes group_id = 1;
+    // user id
+    bytes user_id = 2;
+    // result
+    GroupResult result = 3;
+}
+
+// Reply Invite
+message GroupReplyInviteRequest {
+    // group id
+    bytes group_id = 1;
+    // accept
+    bool accept = 3;
+}
+
+// Reply Invite Response
+message GroupReplyInviteResponse {
+    // group id
+    bytes group_id = 1;
+    // result
+    GroupResult result = 3;
+}
+
+// Remove member
+message GroupRemoveMemberRequest {
+    // group id
+    bytes group_id = 1;
+    // user id
+    bytes user_id = 2;
+}
+
+// Remove member
+message GroupRemoveMemberResponse {
+    // group id
+    bytes group_id = 1;
+    // user id
+    bytes user_id = 2;
+    // result
+    GroupResult result = 3;
+}
+
+// Group info request
+message GroupInfoRequest {
+    // group id
+    bytes group_id = 1;
+}
+
+// Group member state
+enum GroupMemberState {
+    // invited
+    Invited = 0;
+    // activated
+    Activated = 1;
+}
+
+// Group member role
+enum GroupMemberRole {
+    // user
+    User = 0;
+    // admin
+    Admin = 255;
+}
+
+// Group member response
+message GroupMember {
+    // user id
+    bytes user_id = 1;
+    // role
+    GroupMemberRole role = 2;
+    // joined at
+    uint64 joined_at = 3;
+    // state
+    GroupMemberState state = 4;
+    // last message index
+    uint32 last_message_index = 5;
+}
+
+// Group Status
+//
+// Indicates the working status of a group.
+enum GroupStatus {
+    // Group is Active
+    //
+    // The group is in active state and we can post
+    // messages to this group.
+    ACTIVE = 0;
+    // Invite Accepted
+    //
+    // We accepted the invitation to this group
+    // but we haven't received the updated group
+    // info from the group administrator yet.
+    // We therefore can't yet post messages into
+    // the group.
+    INVITE_ACCEPTED = 1;
+    // The group was deactivated
+    //
+    // We either left the group or have been removed from the group
+    // by the group administrator.
+    // We therefore can't post messages into this group anymore.
+    DEACTIVATED = 2;
+}
+
+// Group info response
+message GroupInfo {
+    // group id
+    bytes group_id = 1;
+    // group name
+    string group_name = 2;
+    // created at
+    uint64 created_at = 3;
+    // group status
+    GroupStatus status = 4;
+    // group revision number
+    uint32 revision = 5;
+    // is direct chat
+    bool is_direct_chat = 6;
+    // members
+    repeated GroupMember members = 7;
+    // unread messages
+    uint32 unread_messages = 8;
+    // time when last message was sent
+    uint64 last_message_at = 9;
+    // content type
+    bytes last_message = 10;
+    // sender of the last message
+    bytes last_message_sender_id = 11;
+}
+
+// Group list request
+message GroupListRequest {}
+
+// Group info response
+message GroupListResponse {
+    // group list
+    repeated GroupInfo groups = 1;
+}
+
+message GroupInvited {
+    // sender id
+    bytes sender_id = 1;
+    // received at
+    uint64 received_at = 2;
+    // group info
+    GroupInfo group = 3;
+}
+
+// Group list request
+message GroupInvitedRequest {}
+
+// Group info response
+message GroupInvitedResponse {
+    // invited list
+    repeated GroupInvited invited = 1;
+}

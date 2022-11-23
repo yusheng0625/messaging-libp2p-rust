@@ -1,0 +1,46 @@
+executor:
+  name: win/default
+  size: "medium"
+  shell: bash.exe
+working_directory: ~/qaul-libp2p
+environment:
+  CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+steps:
+  - checkout-project
+  - run:
+      name: Install CMake
+      shell: powershell.exe
+      command: choco install cmake -y
+  - run:
+      name: Install protoc
+      shell: powershell.exe
+      command: |
+        choco install protoc -y
+        protoc --version
+  - run:
+      name: Install Rust
+      command: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        export PATH="/c/Users/circleci/.cargo/bin:$PATH"
+        cargo --version
+        rustup --version
+        rustc --version
+  - run:
+      name: Build dll Libqaul
+      no_output_timeout: 30m
+      command: |
+        export PATH="/c/Users/circleci/.cargo/bin:/c/Program Files/CMake/bin:$PATH"
+        cd rust && cargo build --release
+  - run:
+      name: zip command-line binaries
+      command: |
+        cd rust/target/release
+        mkdir cli-binaries
+        mv qauld qaul-cli cli-binaries
+        cd cli-binaries
+        tar -a -c -f windows-cli-binaries.zip *
+  - persist_to_workspace:
+      root: ~/qaul-libp2p
+      paths:
+        - rust/target/release/libqaul.dll
+        - rust/target/release/cli-binaries/windows-cli-binaries.zip

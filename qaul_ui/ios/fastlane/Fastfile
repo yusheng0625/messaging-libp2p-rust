@@ -1,0 +1,69 @@
+update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    setup_circle_ci
+    if is_ci?
+        xcversion(version: "13.0")
+    end
+  end
+  desc "Syncs with the stored keys, certificates & provisioning profiles"
+  lane :certificates do
+    match(type: "appstore", readonly: true)
+    match(type: "development", readonly: true)
+  end
+
+  desc "Create a beta build and upload to Testflight, intended for local use"
+  lane :beta do
+    Dir.chdir "../.." do
+        sh("flutter", "build", "ios", "--release", "--no-codesign", "--config-only")
+    end
+    match(type: "appstore", readonly: true)
+    increment_build_number(
+      build_number: latest_testflight_build_number(
+        initial_build_number: 0,
+        version: get_version_number(xcodeproj: "Runner.xcodeproj")
+      ) + 1,
+    )
+    gym(scheme: "Runner")
+    pilot(
+      distribute_external: true,
+      notify_external_testers: true,
+      groups: ["App Store Connect Users"],
+      changelog: "New TestFlight build"
+    )
+  end
+
+  desc "Upload to Testflight, intended for CI use"
+  lane :upload_testflight do
+    # Generate hash used for JWT authentication
+    api_key = app_store_connect_api_key
+
+    # Get the version number from the project and check against
+    # the latest build already available on TestFlight, then
+    # increase the build number by 1. If no build is available
+    # for that version, then start at 1
+    increment_build_number(
+      build_number: latest_testflight_build_number(
+        api_key: api_key,
+        initial_build_number: 0,
+        version: get_version_number(xcodeproj: "Runner.xcodeproj")
+      ) + 1,
+    )
+
+    # Set up Distribution code signing and build the app
+    match(type: "appstore", readonly: is_ci)
+    gym(scheme: "Runner")
+
+    # Upload the binary to TestFlight and automatically publish
+    # to the configured beta testing group
+    pilot(
+      distribute_external: true,
+      notify_external_testers: true,
+      groups: ["App Store Connect Users"],
+      changelog: "New build by CircleCI"
+    )
+  end
+end

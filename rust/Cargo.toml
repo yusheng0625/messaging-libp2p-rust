@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    # qaul.net library
+    "libqaul",
+
+    # binaries
+    "clients/cli",
+    "clients/qauld",
+
+    # libp2p modules
+    "libp2p_modules/qaul_info",
+    "libp2p_modules/qaul_messaging"
+]

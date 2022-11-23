@@ -1,0 +1,8 @@
+build android
+https://github.com/qaul/qaul.net/blob/main/docs/qaul/flutter/android.md
+
+
+when device connecting problem.
+
+adb kill-server
+sudo adb start-server

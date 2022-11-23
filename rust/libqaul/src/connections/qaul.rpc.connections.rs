@@ -1,0 +1,113 @@
+/// Connections rpc message container
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Connections {
+    #[prost(oneof="connections::Message", tags="1, 2, 3, 4, 5, 6")]
+    pub message: ::core::option::Option<connections::Message>,
+}
+/// Nested message and enum types in `Connections`.
+pub mod connections {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Message {
+        /// Request a list of all internet nodes.
+        /// libqaul returns an internet_nodes_list message.
+        #[prost(message, tag="1")]
+        InternetNodesRequest(super::InternetNodesRequest),
+        /// returns a list of all internet nodes and 
+        /// an information about why this message has been sent.
+        #[prost(message, tag="2")]
+        InternetNodesList(super::InternetNodesList),
+        /// Add a new internet node address.
+        /// libqaul returns an internet_nodes_list message.
+        #[prost(message, tag="3")]
+        InternetNodesAdd(super::InternetNodesEntry),
+        /// Rename internet node.
+        /// libqaul returns an internet_nodes_list message.
+        #[prost(message, tag="4")]
+        InternetNodesRename(super::InternetNodesEntry),
+        /// Remove an internet node address.
+        /// libqaul returns an internet_nodes_list message.
+        #[prost(message, tag="5")]
+        InternetNodesRemove(super::InternetNodesEntry),
+        /// Update an internet node state.
+        /// libqaul returns an internet_nodes_list message.
+        #[prost(message, tag="6")]
+        InternetNodesState(super::InternetNodesEntry),
+    }
+}
+/// UI request for Internet nodes list
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct InternetNodesRequest {
+}
+/// Internet Nodes List
+///
+/// This is a list of all peer nodes the internet
+/// connections module tries to connect to.
+///
+/// This message is returned after a request, or when
+/// adding or removing a node address.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct InternetNodesList {
+    /// Information about why this message is sent
+    /// and the result of the request, adding or removing
+    /// of nodes.
+    #[prost(enumeration="Info", tag="1")]
+    pub info: i32,
+    /// list of all node multiaddresses that
+    /// the internet module will try to connect to.
+    #[prost(message, repeated, tag="2")]
+    pub nodes: ::prost::alloc::vec::Vec<InternetNodesEntry>,
+}
+/// Internet Nodes Entry
+///
+/// Contains a node address as a libp2p multiaddress.
+/// e.g. "/ip4/144.91.74.192/tcp/9229"
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct InternetNodesEntry {
+    /// address
+    #[prost(string, tag="1")]
+    pub address: ::prost::alloc::string::String,
+    /// name
+    #[prost(string, tag="2")]
+    pub name: ::prost::alloc::string::String,
+    /// enabled
+    #[prost(bool, tag="3")]
+    pub enabled: bool,
+}
+/// Information about the system actions that led to 
+/// the creation of this message.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Info {
+    /// Internet Nodes Request
+    /// By default, this message is sent due to an
+    /// internet nodes request message.
+    Request = 0,
+    /// Add Internet Node 
+    /// Successfully added an address
+    AddSuccess = 1,
+    /// Error: not a valid multiaddress
+    AddErrorInvalid = 2,
+    /// Remove Internet Node
+    /// Successfully removed the address
+    RemoveSuccess = 5,
+    /// Successfully changed state of the address
+    StateSuccess = 6,
+    /// Error: Address not found
+    RemoveErrorNotFound = 7,
+}
+impl Info {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Info::Request => "REQUEST",
+            Info::AddSuccess => "ADD_SUCCESS",
+            Info::AddErrorInvalid => "ADD_ERROR_INVALID",
+            Info::RemoveSuccess => "REMOVE_SUCCESS",
+            Info::StateSuccess => "STATE_SUCCESS",
+            Info::RemoveErrorNotFound => "REMOVE_ERROR_NOT_FOUND",
+        }
+    }
+}

@@ -1,0 +1,26 @@
+# local configuration files
+config.toml
+default.json
+config.yaml
+node.db/
+12D3KooW*/
+logs/
+
+# android artifacts
+android/app/debug
+android/app/profile
+android/app/release
+android/app/src/main/jniLibs
+
+# android-studio specific
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visuals Studio
+.vs/
+
+# MacOS specific
+.DS_Store
+utilities/installers/macos/*.dmg
